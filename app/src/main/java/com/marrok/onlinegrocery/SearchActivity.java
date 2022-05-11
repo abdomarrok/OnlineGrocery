@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,6 +59,24 @@ public class SearchActivity extends AppCompatActivity implements ShowAllCategori
                 showAllCategoriesDialog.show(getSupportFragmentManager(),"all dialog");
             }
         });
+        searchBar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int i, int i1, int i2) {
+                ArrayList<GroceryItem> items=utils.searchForItem(String.valueOf(s));
+                adapter.setItems(items);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
     }
 
     private void initiateSearch() {
@@ -98,9 +118,9 @@ public class SearchActivity extends AppCompatActivity implements ShowAllCategori
                         startActivity(intent);
                         break;
                     case R.id.cart:
-                        //   Intent cartIntent = new Intent(SearchActivity.this, CartActivity.class);
-                        //   cartIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        //  startActivity(cartIntent);
+                           Intent cartIntent = new Intent(SearchActivity.this, CartActivity.class);
+                          cartIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                          startActivity(cartIntent);
                         break;
                     default:
                         break;

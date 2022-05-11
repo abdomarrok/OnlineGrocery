@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.marrok.onlinegrocery.Models.GroceryItem;
+import com.marrok.onlinegrocery.Models.Order;
 
 import java.util.ArrayList;
 public class CartFirstFragment extends Fragment implements CartRecViewAdapter.GetTotalPrice,
@@ -37,9 +38,11 @@ public class CartFirstFragment extends Fragment implements CartRecViewAdapter.Ge
         utils = new Utils(getActivity());
         initRecView();
         btnNext.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-               /** Order order = new Order();
+                Log.d(TAG, "onClick:  passing total from first fragment"+totalPrice);
+               Order order = new Order();
                 order.setTotalPrice(totalPrice);
                 order.setItems(items);
                 Bundle bundle = new Bundle();
@@ -49,7 +52,7 @@ public class CartFirstFragment extends Fragment implements CartRecViewAdapter.Ge
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.in, R.anim.out)
                         .replace(R.id.fragment_container, cartSecondFragment).commit();
-                */
+
             }
         });
         return view;
@@ -89,7 +92,7 @@ public class CartFirstFragment extends Fragment implements CartRecViewAdapter.Ge
 
         txtPrice = (TextView) view.findViewById(R.id.txtSum);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
-        btnNext = (Button) view.findViewById(R.id.btnNext);
+        btnNext = (Button) view.findViewById(R.id.btnNext1);
         txtNoItem = (TextView) view.findViewById(R.id.txtNoItem);
     }
 
@@ -97,6 +100,9 @@ public class CartFirstFragment extends Fragment implements CartRecViewAdapter.Ge
     public void onGettingTotalPriceResult(double price) {
         Log.d(TAG, "onGettingTotalPriceResult: total price"+price);
         txtPrice.setText(String.valueOf(price));
+            totalPrice = price;
+
+
     }
 
     @Override

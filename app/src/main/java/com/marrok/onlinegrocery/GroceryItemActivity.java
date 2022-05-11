@@ -24,7 +24,6 @@ import java.util.ArrayList;
 
 public class GroceryItemActivity extends AppCompatActivity implements addReviewDialog.AddReview{
     private static final String TAG = "GroceryItemActivity";
-
     private TextView txtName, txtPrice, txtDescription, txtAvailability;
     private ImageView itemImage;
     private Button btnAddToCart;
@@ -35,6 +34,25 @@ public class GroceryItemActivity extends AppCompatActivity implements addReviewD
     private int currentRate = 0;
     private GroceryItem incomingItem;
     private Utils utils;
+
+    private TrackUserTime mService;
+    private boolean isBound=false;
+    private ServiceConnection connection=new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+            TrackUserTime.LocalBinder binder=
+                    (TrackUserTime.LocalBinder) service;
+            mService=binder.getService();
+            isBound=true;
+            mService.setItem(incomingItem);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            isBound=false;
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +66,7 @@ public class GroceryItemActivity extends AppCompatActivity implements addReviewD
             this.currentRate=incomingItem.getRate();
             changeVisibility(currentRate);
             setViewsValues();
+            utils.increaseUserPoint(incomingItem,1);
         }catch(NullPointerException e){
             e.printStackTrace();
         }
@@ -73,10 +92,10 @@ public class GroceryItemActivity extends AppCompatActivity implements addReviewD
             @Override
             public void onClick(View v) {
                utils.addItemToCart(incomingItem.getId());
-             /**  Intent intent = new Intent(GroceryItemActivity.this, CartActivity.class);
+              Intent intent = new Intent(GroceryItemActivity.this, CartActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-              */
+
 
             }
         });
@@ -261,9 +280,27 @@ public class GroceryItemActivity extends AppCompatActivity implements addReviewD
     public void onAddReviewResult(Review review) {
         Log.d(TAG, "onAddReviewResult: we adding"+review.toString());
         utils.addReview(review);
+        utils.increaseUserPoint(incomingItem,3);
         ArrayList<Review> reviews =utils.getReviewForItem(review.getGroceryItemId());
         if (reviews != null) {
             reviewsAdapter.setReviews(reviews);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Intent intent = new Intent(this, TrackUserTime.class);
+        bindService(intent, connection, BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (isBound) {
+            unbindService(connection);
         }
     }
 }

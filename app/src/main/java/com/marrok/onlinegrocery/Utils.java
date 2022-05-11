@@ -335,14 +335,14 @@ public class Utils {
         Gson gson = new Gson();
         Type type = new TypeToken<ArrayList<Integer>>() {
         }.getType();
-        ArrayList<GroceryItem> cartItems = gson.fromJson(sharedPreferences.getString("cartItems", null), type);
+        ArrayList<Integer> cartItems = gson.fromJson(sharedPreferences.getString("cartItems", null), type);
 
         ArrayList<Integer> newItems = new ArrayList<>();
 
         if (null != cartItems) {
-            for (GroceryItem i: cartItems) {
-                if (!i.equals(item)) {
-                    newItems.add(i.getId());
+            for (int i: cartItems) {
+                if (item.getId()!= i) {
+                    newItems.add(i);
                 }
             }
 
